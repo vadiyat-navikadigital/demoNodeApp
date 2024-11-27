@@ -71,7 +71,6 @@ exports.forgotPassword = async (req, res) => {
 
 // Reset Password
 exports.resetPassword = async (req, res) => {
-    console.log("1111111111111111111");
     const { token } = req.params;
     const { password } = req.body;
 

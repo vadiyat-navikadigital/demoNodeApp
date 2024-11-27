@@ -46,6 +46,7 @@ const memberSchema = new mongoose.Schema({
   remark: String,
   renewalDate: String,
   thumbId: String,
+  status: Boolean,
 });
 
 // Package Schema

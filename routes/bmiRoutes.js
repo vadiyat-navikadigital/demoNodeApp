@@ -18,4 +18,8 @@ router.put('/bmi-records/:memberId', bmiController.updateBmiRecord);
 // Delete BMI Record by Member ID
 router.delete('/bmi-records/:memberId', bmiController.deleteBmiRecord);
 
+// Add this route in bmiRoutes.js
+router.get('/bmi-records/export/csv', bmiController.exportSpecificBmiRecordsToCsv);
+
+
 module.exports = router;

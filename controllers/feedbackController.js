@@ -1,11 +1,46 @@
+const { Parser } = require("json2csv");
 const Feedback = require("../models/feedbackModel");
 
-// Get all feedbacks
+// Get All feedback or get specific feedback by search query fields
 exports.getAllFeedbacks = async (req, res) => {
   try {
-    const feedbacks = await Feedback.find();
-    res.json(feedbacks);
+    const { description, email, memberId, name, uniqueId,
+      limit = 10, // Default limit
+      offset = 0, // Default offset
+      sort = "createdAt:desc", // Default sort
+    } = req.query;
+
+    // Build the search query
+    const query = {};
+
+    if (description) query.description = new RegExp(description.trim().replace(/\s+/g, " "), "i");
+    if (email) query.email = email;
+    if (memberId) query.memberId = memberId;
+    if (name) query.name = new RegExp(name.trim().replace(/\s+/g, " "), "i");
+    if (uniqueId) query.uniqueId = uniqueId;
+
+    // Parse sorting
+    const [sortField, sortOrder] = sort.split(":");
+    const sortObj = { [sortField]: sortOrder === "desc" ? -1 : 1 };
+
+    // Fetch records with pagination and sorting
+    const feedbacks = await Feedback.find(query)
+      .sort(sortObj)
+      .skip(Number(offset))
+      .limit(Number(limit));
+
+    // Get total count for pagination meta
+    const totalRecords = await Feedback.countDocuments(query);
+
+    res.status(200).json({
+      total: totalRecords,
+      limit: Number(limit),
+      offset: Number(offset),
+      sort: sortObj,
+      data: feedbacks,
+    });
   } catch (error) {
+    console.error("Error retrieving feedbacks:", error);
     res.status(500).json({ message: "Server error", error });
   }
 };
@@ -65,3 +100,39 @@ exports.deleteFeedback = async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 };
+
+// Export all or specific feedbacks as CSV
+exports.exportSpecificFeedbacksToCsv = async (req, res) => {
+  try {
+    const { _id, memberId, uniqueId } = req.query;
+
+    // Build dynamic filter criteria based on query parameters
+    const filter = {};
+    if (_id) filter._id = _id;
+    if (memberId) filter.memberId = memberId;
+    if (uniqueId) filter.uniqueId = uniqueId;
+
+    // Find feedback records matching the filter
+    const feedbacks = await Feedback.find(filter);
+    if (!feedbacks || feedbacks.length === 0) {
+      return res.status(404).json({ message: "No feedback records found for the specified criteria" });
+    }
+
+    // Define fields for the CSV
+    const fields = ["uniqueId", "name", "email", "memberId", "description", "createdAt", "updatedAt"];
+    const opts = { fields };
+
+    // Convert to CSV
+    const parser = new Parser(opts);
+    const csv = parser.parse(feedbacks);
+
+    // Send the CSV file
+    res.header("Content-Type", "text/csv");
+    res.attachment("specific_feedback_records.csv");
+    return res.send(csv);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+

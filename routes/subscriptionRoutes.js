@@ -7,5 +7,6 @@ router.get('/', subscriptionController.getAllSubscriptions); // Get all subscrip
 router.get('/:id', subscriptionController.getSubscriptionById); // Get a subscription by ID
 router.put('/:id', subscriptionController.updateSubscription); // Update a subscription by ID
 router.delete('/:id', subscriptionController.deleteSubscription); // Delete a subscription by ID
+router.get("/export/csv", subscriptionController.exportSubscriptionsToCSV); // Export subscriptions to CSV
 
 module.exports = router;

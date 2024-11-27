@@ -14,6 +14,7 @@ const gymSchema = new mongoose.Schema(
     userId: { type: String, required: true },
     website: { type: String, default: "" },
     isExpiredSoon: { type: Boolean, default: false },
+    status: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

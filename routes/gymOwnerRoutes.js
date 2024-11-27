@@ -9,6 +9,7 @@ const {
 
 const router = express.Router();
 
+// General Routes for Items
 router.get("/:gymOwnerId/:collectionName", getAllItems);
 router.get("/:gymOwnerId/:collectionName/:itemId", getItem);
 router.post("/:gymOwnerId/:collectionName", createItem);
