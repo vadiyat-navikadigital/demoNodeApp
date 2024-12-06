@@ -6,7 +6,7 @@ const gymSchema = new mongoose.Schema(
     contact: { type: String, required: true },
     emailAddress: { type: String, required: true },
     gymName: { type: String, required: true },
-    expiresAt: { type: Number, default: "" },
+    expiresAt: { type: Number, default: 0 },
     photo: { type: String, default: "" },
     plan: { type: String, default: "" },
     subscription: { type: String, default: "" },

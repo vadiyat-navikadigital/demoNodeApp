@@ -68,16 +68,16 @@ exports.createGym = async (req, res) => {
   const GymOwner = require("../models/gymOwnerModel"); // Import GymOwner model
 
   try {
-    const { address, contact, emailAddress, gymName, subscription, uniqueId, userId, website, status, amount } = req.body;
+    const { address, expiresAt, contact, emailAddress, gymName, subscription, uniqueId, userId, website, status, amount } = req.body;
     const photo = req.file ? req.file.path : "";
 
     // Validate required fields
-    if (!address || !contact || !emailAddress || !gymName || !uniqueId || !userId || !amount) {
+    if (!expiresAt || !address || !contact || !emailAddress || !gymName || !uniqueId || !userId || !amount) {
       return res.status(400).json({ message: "All required fields must be provided" });
     }
 
     // Create a new Gym
-    const newGym = new Gym({ address, contact, emailAddress, gymName, photo, subscription, uniqueId, userId, website, status, amount });
+    const newGym = new Gym({expiresAt, address, contact, emailAddress, gymName, photo, subscription, uniqueId, userId, website, status, amount });
 
     const savedGym = await newGym.save();
 
